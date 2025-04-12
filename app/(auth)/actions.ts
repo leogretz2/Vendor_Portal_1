@@ -2,9 +2,10 @@
 
 import { z } from 'zod';
 
-import { createUser, getUser } from '@/lib/db/queries';
+import { createUser, getUser, testConnection } from '@/lib/db/queries';
 
 import { signIn } from './auth';
+import test from 'node:test';
 
 const authFormSchema = z.object({
   email: z.string().email(),
@@ -60,6 +61,9 @@ export const register = async (
       email: formData.get('email'),
       password: formData.get('password'),
     });
+
+    // DEBUG
+    testConnection();
 
     const [user] = await getUser(validatedData.email);
 

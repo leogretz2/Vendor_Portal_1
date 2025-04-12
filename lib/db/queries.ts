@@ -28,6 +28,8 @@ const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
 export async function getUser(email: string): Promise<Array<User>> {
+  // DEBUG
+  console.log('Getting user from database', client, 'llp;', db, 'ff', email);
   try {
     return await db.select().from(user).where(eq(user.email, email));
   } catch (error) {
@@ -405,3 +407,17 @@ export async function updateChatVisiblityById({
     throw error;
   }
 }
+
+// DEBUG - keep here to test if ever breaks
+export async function testConnection() {
+  try {
+    // Execute a minimal query to verify connectivity.
+    // Here we select the current timestamp from the database.
+    const result = await client`SELECT NOW() AS now`;
+    console.log('DB connection successful. Database time:', result);
+  } catch (error) {
+    console.error('DB connection test failed:', error);
+  }
+}
+
+testConnection();
