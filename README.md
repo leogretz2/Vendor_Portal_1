@@ -56,7 +56,12 @@ You will need to use the environment variables [defined in `.env.example`](.env.
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev -> vercel dev
 ```
 
 Your app template should now be running on [localhost:3000](http://localhost:3000).
+
+Notes:
+-doesn't work with pnpm dev for some reason (I think related to pnpm's symlinking(?) of node_modules, but that not being clarified in next.config.ts)
+--I think it next uses webpack, which gets confused with the pnpm symlinking the dependency graph
+-works with `vercel dev`
