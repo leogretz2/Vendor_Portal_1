@@ -23,8 +23,9 @@ import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
+import { getVendorsTool } from '@/lib/ai/tools/get-vendors';
 import { isProductionEnvironment } from '@/lib/constants';
-import { myProviderOpenAI } from '@/lib/ai/providers';
+import { openAIProvider } from '@/lib/ai/providers';
 
 export const maxDuration = 60;
 
@@ -82,7 +83,7 @@ export async function POST(request: Request) {
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: myProviderOpenAI.languageModel(selectedChatModel),
+          model: openAIProvider.languageModel(selectedChatModel),
           system: systemPrompt({ selectedChatModel }),
           messages,
           maxSteps: 5,
@@ -94,6 +95,7 @@ export async function POST(request: Request) {
                   'createDocument',
                   'updateDocument',
                   'requestSuggestions',
+                  'getVendors',
                 ],
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
@@ -105,6 +107,7 @@ export async function POST(request: Request) {
               session,
               dataStream,
             }),
+            getVendors: getVendorsTool,
           },
           onFinish: async ({ response }) => {
             if (session.user?.id) {

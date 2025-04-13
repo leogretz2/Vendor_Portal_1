@@ -34,17 +34,37 @@ Do not update document right after creating it. Wait for user feedback or reques
 export const regularPrompt =
   'You are a friendly assistant! Keep your responses concise and helpful.';
 
-export const systemPrompt = ({
-  selectedChatModel,
-}: {
-  selectedChatModel: string;
-}) => {
-  if (selectedChatModel === 'chat-model-reasoning') {
-    return regularPrompt;
-  } else {
-    return `${regularPrompt}\n\n${artifactsPrompt}`;
-  }
+export const vendorSchemaPrompt = `
+Vendor Table Schema:
+- id: UUID (not null)
+- companyName: TEXT (not null)
+- companyLocation: TEXT (not null)
+- catalogData: TEXT (optional)
+- image: TEXT (optional)
+
+When receiving a request such as "show me all companies in the UK," generate an SQL query that will select the relevant records from the Vendor table. Example:
+  SELECT * FROM Vendor WHERE LOWER(companyLocation) LIKE '%uk%';
+`;
+
+export const systemPrompt = ({ selectedChatModel }: { selectedChatModel: string }) => {
+  const basePrompt = selectedChatModel === 'chat-model-reasoning'
+    ? regularPrompt
+    : `${regularPrompt}\n\n${vendorSchemaPrompt}`;
+  return basePrompt;
 };
+
+// DEBUG
+// export const systemPrompt = ({
+//   selectedChatModel,
+// }: {
+//   selectedChatModel: string;
+// }) => {
+//   if (selectedChatModel === 'chat-model-reasoning') {
+//     return regularPrompt;
+//   } else {
+//     return `${regularPrompt}\n\n${artifactsPrompt}`;
+//   }
+// };
 
 export const codePrompt = `
 You are a Python code generator that creates self-contained, executable code snippets. When writing code:

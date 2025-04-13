@@ -4,6 +4,7 @@ import { genSaltSync, hashSync } from 'bcrypt-ts';
 import { and, asc, desc, eq, gt, gte, inArray, lt, SQL } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import { sql } from 'drizzle-orm';
 
 import {
   user,
@@ -16,6 +17,8 @@ import {
   vote,
   type DBMessage,
   Chat,
+  VendorT,
+  vendor,
 } from './schema';
 import { ArtifactKind } from '@/components/artifact';
 
@@ -406,6 +409,16 @@ export async function updateChatVisiblityById({
     console.error('Failed to update chat visibility in database');
     throw error;
   }
+}
+
+export async function getVendors(whereClause?: ReturnType<typeof sql>): Promise<Array<VendorT>> {
+  let query = db.select().from(vendor);
+  if (whereClause) {
+    // @ts-expect-error - DEBUG I don't know what these types are doing
+    query = query.where(whereClause as any);
+  }
+  const rows = await query;
+  return rows;
 }
 
 // DEBUG - keep here to test if ever breaks

@@ -150,3 +150,38 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+// CREATE TABLE Vendor (
+//   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+//   companyName text NOT NULL,
+//   companyLocation text NOT NULL,
+//   catalogData text,
+//   image text
+// );
+export const vendor = pgTable(
+  'Vendor',
+  {
+    id: uuid('id').notNull().defaultRandom(),
+    companyName: text('companyName').notNull(),
+    companyLocation: text('companyLocation').notNull(),
+    catalogData: text('catalogData'),
+    image: text('image'),
+    createdAt: timestamp('createdAt').notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.id] }),
+    // documentRef: foreignKey({
+    //   columns: [table.documentId, table.documentCreatedAt],
+    //   foreignColumns: [document.id, document.createdAt],
+    // }),
+  }),
+);
+
+export type VendorT = {
+  id: string;
+  companyName: string;
+  companyLocation: string;
+  catalogData?: string | null;
+  image?: string | null;
+};
+
+export type Vendor = InferSelectModel<typeof vendor>;

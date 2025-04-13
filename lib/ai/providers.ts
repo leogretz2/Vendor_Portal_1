@@ -13,7 +13,7 @@ import {
   titleModel,
 } from './models.test';
 
-export const myProviderXAI = isTestEnvironment
+export const xAIProvider = isTestEnvironment
   ? customProvider({
       languageModels: {
         'chat-model': chatModel,
@@ -37,7 +37,7 @@ export const myProviderXAI = isTestEnvironment
       },
     });
 
-export const myProviderOpenAI = isTestEnvironment
+export const openAIProvider = isTestEnvironment
   ? customProvider({
       languageModels: {
         'chat-model': chatModel,
