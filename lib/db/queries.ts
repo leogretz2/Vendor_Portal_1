@@ -1,3 +1,4 @@
+//db/queries.ts
 import 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
@@ -5,6 +6,7 @@ import { and, asc, desc, eq, gt, gte, inArray, lt, SQL } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { sql } from 'drizzle-orm';
+
 
 import {
   user,
@@ -411,26 +413,67 @@ export async function updateChatVisiblityById({
   }
 }
 
-export async function getVendors(whereClause?: ReturnType<typeof sql>): Promise<Array<VendorT>> {
-  let query = db.select().from(vendor);
-  if (whereClause) {
-    // @ts-expect-error - DEBUG I don't know what these types are doing
-    query = query.where(whereClause as any);
-  }
-  const rows = await query;
-  return rows;
+/**
+ * Fetch vendors matching an optional WHERE clause.
+ * If whereClause is omitted, returns all vendors.
+ */
+export async function getVendors(whereClause?: SQL) {
+  // console.log('🔧 getVendors - received whereClause:', whereClause?.values);
+
+  // build the un‑filtered query
+  const baseQuery = db
+    .select({
+      id:               vendor.id,
+      internalId:       vendor.internalId,
+      vendorName:       vendor.vendorName,
+      factoryName:      vendor.factoryName,
+      productRange:     vendor.productRange,
+      category:         vendor.category,
+      vendorType:       vendor.vendorType,
+      ytdPurchase:      vendor.ytdPurchase,
+      purchasesLY:      vendor.purchasesLY,
+      // openPOs:          vendor.openPOs,
+      terms:            vendor.terms,
+      certificates:     vendor.certificates,
+      contactName:      vendor.contactName,
+      email:            vendor.email,
+      phone:            vendor.phone,
+      country:          vendor.country,
+      // audits:           vendor.audits,
+      city:             vendor.city,
+      certification:    vendor.certification,
+      factories:        vendor.factories,
+      relevant3rdParties: vendor.relevant3rdParties,
+      createdAt:        vendor.createdAt,
+    })
+    .from(vendor)
+
+  // apply WHERE only if provided
+  const finalQuery = whereClause
+    ? baseQuery.where(whereClause)
+    : baseQuery
+
+  console.log('🔧 getVendors - about to run query…');
+
+  // execute and normalize bigint → string
+  const rows = await finalQuery
+
+  console.log('🔧 getVendors - result rows:', rows);
+
+  return rows.map(r => ({
+    ...r,
+    internalId: r.internalId?.toString(),
+  }))
 }
 
-// DEBUG - keep here to test if ever breaks
-export async function testConnection() {
-  try {
-    // Execute a minimal query to verify connectivity.
-    // Here we select the current timestamp from the database.
-    const result = await client`SELECT NOW() AS now`;
-    console.log('DB connection successful. Database time:', result);
-  } catch (error) {
-    console.error('DB connection test failed:', error);
-  }
-}
+// // DEBUG: optional
+// export async function testConnection() {
+//   try {
+//     const result = await client`SELECT NOW() AS now`
+//     console.log('DB connection successful. Database time:', result)
+//   } catch (error) {
+//     console.error('DB connection test failed:', error)
+//   }
+// }
 
-testConnection();
+// testConnection()

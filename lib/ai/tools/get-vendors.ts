@@ -1,37 +1,69 @@
+// lib/ai/tools/get-vendors.ts
 import { tool } from 'ai';
 import { z } from 'zod';
 import { sql } from 'drizzle-orm';
-import { getVendors } from '@/lib/db/queries'; // Ensure you have this function implemented in your queries.ts
+import { PgDialect } from 'drizzle-orm/pg-core';
+import { getVendors } from '@/lib/db/queries';
+import { vendor } from '@/lib/db/schema';
+
+const pgDialect = new PgDialect();
+const MAX_RESULTS = 20;
 
 export const getVendorsTool = tool({
-  description: 'Query the Vendor table for companies matching a given description. ' +
-               'For example: "all companies in the UK" or "companies in New York".',
+  description:
+    'Retrieve vendors matching a natural language query across *all* vendors. ' +
+    'For example: "companies in the UK" or "distributors with open POs".',
   parameters: z.object({
-    // We accept a free-form description from the user that we will translate into a SQL condition.
-    description: z.string().describe('A natural language description that specifies vendor criteria'),
+    description: z.string().describe('Search phrase to filter vendors'),
   }),
   execute: async ({ description }) => {
-    // Here we perform a simple transformation based on the input description.
-    // For a more robust solution, you might implement Natural Language Processing (NLP)
-    // to accurately convert the description into a SQL WHERE clause.
-    let whereClause;
-    const lowerDesc = description.toLowerCase();
-    
-    if (lowerDesc.includes('uk')) {
-      // Query vendors whose companyLocation contains 'uk'
-      whereClause = sql`LOWER("companyLocation") LIKE '%uk%'`;
-    } else if (lowerDesc.includes('new york')) {
-      // Query vendors whose companyLocation contains 'new york'
-      whereClause = sql`LOWER("companyLocation") LIKE '%new york%'`;
+    console.log('🔍 Description:', description);
+
+    // strip generic words
+    const phrase = description
+      .replace(/\b(vendor|vendors|company|companies|in|the)\b/gi, ' ')
+      .trim();
+    console.log('🔍 Sanitized phrase:', phrase);
+
+    // if blank → full table
+    const whereClause = phrase
+      ? sql`
+        to_tsvector('english',
+          coalesce(${vendor.vendorName}, '')      || ' ' ||
+          coalesce(${vendor.factoryName}, '')     || ' ' ||
+          coalesce(${vendor.productRange}, '')    || ' ' ||
+          coalesce(${vendor.category}, '')        || ' ' ||
+          coalesce(${vendor.vendorType}, '')      || ' ' ||
+          coalesce(${vendor.country}, '')         || ' ' ||
+          coalesce(${vendor.city}, '')
+        )
+        @@ plainto_tsquery('english', ${phrase})
+      `
+      : undefined;
+
+    if (whereClause) {
+      const { sql: text, params } = pgDialect.sqlToQuery(whereClause);
+      console.log('🔍 WHERE SQL:', text);
+      console.log('🔍 WHERE params:', params);
+    } else {
+      console.log('🔍 No filter → fetching all vendors');
     }
-    // Add additional conditions as needed...
 
     try {
-      // Call the database query function that returns the vendor records based on the whereClause.
-      const vendors = await getVendors(whereClause);
-      return vendors;
-    } catch (error) {
-      console.error('Error in getVendorsTool:', error);
+      const allRows = await getVendors(whereClause);
+      console.log(`🔍 Total matching rows: ${allRows.length}`);
+
+      // limit to MAX_RESULTS
+      const rows = allRows.slice(0, MAX_RESULTS);
+      if (allRows.length > MAX_RESULTS) {
+        console.log(
+          `🔍 Returning only top ${MAX_RESULTS} results (of ${allRows.length})`
+        );
+      }
+
+      return rows;
+    } catch (err) {
+      console.error('❌ getVendorsTool error:', err);
       return { error: 'Unable to fetch vendor information.' };
     }
   },

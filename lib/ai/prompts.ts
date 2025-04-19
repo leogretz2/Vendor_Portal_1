@@ -32,24 +32,24 @@ Do not update document right after creating it. Wait for user feedback or reques
 `;
 
 export const regularPrompt =
-  'You are a friendly assistant! Keep your responses concise and helpful.';
+  `You are a friendly assistant! Keep your responses concise and helpful.`;
 
-export const vendorSchemaPrompt = `
-Vendor Table Schema:
-- id: UUID (not null)
-- companyName: TEXT (not null)
-- companyLocation: TEXT (not null)
-- catalogData: TEXT (optional)
-- image: TEXT (optional)
+// export const vendorSchemaPrompt = `
+// Vendor Table Schema:
+// - id: UUID (not null)
+// - companyName: TEXT (not null)
+// - companyLocation: TEXT (not null)
+// - catalogData: TEXT (optional)
+// - image: TEXT (optional)
 
-When receiving a request such as "show me all companies in the UK," generate an SQL query that will select the relevant records from the Vendor table. Example:
-  SELECT * FROM Vendor WHERE LOWER(companyLocation) LIKE '%uk%';
-`;
+// When receiving a request such as "show me all companies in the UK," generate an SQL query that will select the relevant records from the Vendor table. Example:
+//   SELECT * FROM Vendor WHERE LOWER(companyLocation) LIKE '%uk%';
+// `;
 
 export const systemPrompt = ({ selectedChatModel }: { selectedChatModel: string }) => {
   const basePrompt = selectedChatModel === 'chat-model-reasoning'
     ? regularPrompt
-    : `${regularPrompt}\n\n${vendorSchemaPrompt}`;
+    : `${regularPrompt}\n\n${artifactsPrompt}`;
   return basePrompt;
 };
 

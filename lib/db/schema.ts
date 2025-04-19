@@ -1,3 +1,4 @@
+//db/schema.ts
 import type { InferSelectModel } from 'drizzle-orm';
 import {
   pgTable,
@@ -9,6 +10,7 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  bigint,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -157,24 +159,35 @@ export type Suggestion = InferSelectModel<typeof suggestion>;
 //   catalogData text,
 //   image text
 // );
-export const vendor = pgTable(
-  'Vendor',
-  {
-    id: uuid('id').notNull().defaultRandom(),
-    companyName: text('companyName').notNull(),
-    companyLocation: text('companyLocation').notNull(),
-    catalogData: text('catalogData'),
-    image: text('image'),
-    createdAt: timestamp('createdAt').notNull(),
-  },
-  (table) => ({
-    pk: primaryKey({ columns: [table.id] }),
-    // documentRef: foreignKey({
-    //   columns: [table.documentId, table.documentCreatedAt],
-    //   foreignColumns: [document.id, document.createdAt],
-    // }),
-  }),
-);
+// Updated Vendor schema consolidating all fields from vendor1
+export const vendor = pgTable('Vendor', {
+  id:            uuid('id').notNull().defaultRandom(),
+  internalId:     bigint({ mode: 'number' }),
+  vendorName:    text('VENDOR NAME'),
+  factoryName:   text('FACTORY NAME'),
+  productRange:  text('Product Range'),
+  category:      text('Category'),
+  vendorType:    text('Vendor Type'),
+  ytdPurchase:   text('YTD Purchases'),
+  purchasesLY:   text('Purchases LY'),
+  // openPOs:        bigint({ mode: 'number' }),
+  terms:         text('Terms'),
+  certificates:  text('Certificates'),
+  contactName:   text('Name'),
+  email:         text('Email'),
+  phone:         text('Phone'),
+  country:       text('Country'),
+  city:          text('City'),
+  certification: text('Certification documents'),
+  factories:     text('Factories'),
+  relevant3rdParties: text('Relevant 3rd party social audit'),
+  // we’ll reuse your existing "Audits" column as our `createdAt` for relative timestamps
+  createdAt:     timestamp('Audits'),
+}, (table) => ({
+  pk: primaryKey(table.id),
+}));
+
+export type Vendor = InferSelectModel<typeof vendor>;
 
 export type VendorT = {
   id: string;
@@ -184,4 +197,3 @@ export type VendorT = {
   image?: string | null;
 };
 
-export type Vendor = InferSelectModel<typeof vendor>;
