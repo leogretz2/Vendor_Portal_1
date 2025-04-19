@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS "Vendor" (
+	"id" uuid DEFAULT gen_random_uuid() NOT NULL,
+	"internalId" bigint,
+	"VENDOR NAME" text,
+	"FACTORY NAME" text,
+	"Product Range" text,
+	"Category" text,
+	"Vendor Type" text,
+	"YTD Purchases" text,
+	"Purchases LY" text,
+	"Terms" text,
+	"Certificates" text,
+	"Name" text,
+	"Email" text,
+	"Phone" text,
+	"Country" text,
+	"City" text,
+	"Certification documents" text,
+	"Factories" text,
+	"Relevant 3rd party social audit" text,
+	"Audits" timestamp,
+	CONSTRAINT "Vendor_id_pk" PRIMARY KEY("id")
+);

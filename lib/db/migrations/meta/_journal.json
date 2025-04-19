@@ -43,6 +43,27 @@
       "when": 1741934630596,
       "tag": "0005_wooden_whistler",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1745098134064,
+      "tag": "0006_green_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1745098527022,
+      "tag": "0007_parallel_pete_wisdom",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1745098720263,
+      "tag": "0008_volatile_thanos",
+      "breakpoints": true
     }
   ]
 }

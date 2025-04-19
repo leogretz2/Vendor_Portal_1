@@ -1,0 +1,1 @@
+ALTER TABLE "Vendor" ALTER COLUMN "Audits" SET DATA TYPE text;

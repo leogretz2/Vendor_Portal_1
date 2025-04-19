@@ -14,20 +14,20 @@ const SAMPLE_VENDORS: VendorType[] = [
     productRange: 'Widgets, Gadgets',
     category: 'Electronics',
     vendorType: 'Distributor',
-    ytdPurchase: '$120,000',
-    purchasesLY: '$100,000',
-    // openPOs: 7,
+    ytdPurchases: '$120,000',
+    purchasesLy: '$100,000',
+    openPOs: 7,
     terms: 'Net 30',
     certificates: 'ISO9001',
-    contactName: 'John Doe',
+    name: 'John Doe',
     email: 'john.doe@acme.com',
     phone: '+1-555-1234',
     country: 'USA',
     city: 'San Francisco',
-    certification: 'CE, RoHS',
+    certificationDocuments: 'CE, RoHS',
     factories: 'San Jose, Portland',
-    relevant3rdParties: 'InspectCo',
-    createdAt: new Date('2025-04-13T18:50:18.000Z'),
+    relevant3RdPartySocialAudit: 'InspectCo',
+    audits:       'Audits',
   },
 ];
 
@@ -83,11 +83,6 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
             <div className="flex-1">
               <div className="flex justify-between items-center">
                 <h3 className="text-slate-50 text-xl font-semibold">{name}</h3>
-                +       {v.createdAt && (
-                <span className="text-slate-400 text-xs">
-                    {formatDistanceToNow(v.createdAt, { addSuffix: true })}
-                </span>
-                )}
               </div>
 
               <p className="text-slate-300 text-sm mb-2">
@@ -110,23 +105,23 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
                 {v.vendorType && (
                   <div><span className="font-medium">Type:</span> {v.vendorType}</div>
                 )}
-                {v.ytdPurchase && (
-                  <div><span className="font-medium">YTD Purchases:</span> {v.ytdPurchase}</div>
+                {v.ytdPurchases && (
+                  <div><span className="font-medium">YTD Purchases:</span> {v.ytdPurchases}</div>
                 )}
-                {v.purchasesLY && (
-                  <div><span className="font-medium">Last Year:</span> {v.purchasesLY}</div>
+                {v.purchasesLy && (
+                  <div><span className="font-medium">Last Year:</span> {v.purchasesLy}</div>
                 )}
-                {/* {v.openPOs != null && (
+                {v.openPOs != null && (
                   <div><span className="font-medium">Open POs:</span> {v.openPOs}</div>
-                )} */}
+                )}
                 {v.terms && (
                   <div><span className="font-medium">Terms:</span> {v.terms}</div>
                 )}
                 {v.certificates && (
                   <div><span className="font-medium">Certificates:</span> {v.certificates}</div>
                 )}
-                {v.contactName && (
-                  <div><span className="font-medium">Contact:</span> {v.contactName}</div>
+                {v.name && (
+                  <div><span className="font-medium">Contact:</span> {v.name}</div>
                 )}
                 {v.email && (
                   <div><span className="font-medium">Email:</span> {v.email}</div>
@@ -137,11 +132,11 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
                 {v.factories && (
                   <div><span className="font-medium">Factories:</span> {v.factories}</div>
                 )}
-                {v.relevant3rdParties && (
-                  <div><span className="font-medium">3rd Parties:</span> {v.relevant3rdParties}</div>
+                {v.relevant3RdPartySocialAudit && (
+                  <div><span className="font-medium">3rd Parties:</span> {v.relevant3RdPartySocialAudit}</div>
                 )}
-                {v.certification && (
-                  <div><span className="font-medium">Cert Docs:</span> {v.certification}</div>
+                {v.certificates && (
+                  <div><span className="font-medium">Cert Docs:</span> {v.certificates}</div>
                 )}
               </div>
             </div>

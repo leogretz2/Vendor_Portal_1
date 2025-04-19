@@ -161,31 +161,30 @@ export type Suggestion = InferSelectModel<typeof suggestion>;
 // );
 // Updated Vendor schema consolidating all fields from vendor1
 export const vendor = pgTable('Vendor', {
-  id:            uuid('id').notNull().defaultRandom(),
-  internalId:     bigint({ mode: 'number' }),
-  vendorName:    text('VENDOR NAME'),
-  factoryName:   text('FACTORY NAME'),
-  productRange:  text('Product Range'),
-  category:      text('Category'),
-  vendorType:    text('Vendor Type'),
-  ytdPurchase:   text('YTD Purchases'),
-  purchasesLY:   text('Purchases LY'),
-  // openPOs:        bigint({ mode: 'number' }),
-  terms:         text('Terms'),
-  certificates:  text('Certificates'),
-  contactName:   text('Name'),
-  email:         text('Email'),
-  phone:         text('Phone'),
-  country:       text('Country'),
-  city:          text('City'),
-  certification: text('Certification documents'),
-  factories:     text('Factories'),
-  relevant3rdParties: text('Relevant 3rd party social audit'),
-  // we’ll reuse your existing "Audits" column as our `createdAt` for relative timestamps
-  createdAt:     timestamp('Audits'),
-}, (table) => ({
-  pk: primaryKey(table.id),
-}));
+	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
+	internalId: bigint({ mode: "number" }),
+	vendorName: text("VENDOR NAME"),
+	factoryName: text("FACTORY NAME"),
+	productRange: text("Product Range"),
+	category: text("Category"),
+	vendorType: text("Vendor Type"),
+	ytdPurchases: text("YTD Purchases"),
+	purchasesLy: text("Purchases LY"),
+	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
+	openPOs: bigint({ mode: "number" }),
+	terms: text("Terms"),
+	certificates: text("Certificates"),
+	name: text("Name"),
+	email: text("Email"),
+	phone: text("Phone"),
+	country: text("Country"),
+	audits: text("Audits"),
+	city: text("City"),
+	certificationDocuments: text("Certification documents"),
+	factories: text("Factories"),
+	relevant3RdPartySocialAudit: text("Relevant 3rd party social audit"),
+	id: uuid().defaultRandom().primaryKey().notNull(),
+});
 
 export type Vendor = InferSelectModel<typeof vendor>;
 

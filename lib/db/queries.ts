@@ -430,21 +430,20 @@ export async function getVendors(whereClause?: SQL) {
       productRange:     vendor.productRange,
       category:         vendor.category,
       vendorType:       vendor.vendorType,
-      ytdPurchase:      vendor.ytdPurchase,
-      purchasesLY:      vendor.purchasesLY,
-      // openPOs:          vendor.openPOs,
+      ytdPurchases:      vendor.ytdPurchases,
+      purchasesLy:      vendor.purchasesLy,
+      openPOs:          vendor.openPOs,
       terms:            vendor.terms,
       certificates:     vendor.certificates,
-      contactName:      vendor.contactName,
+      name:             vendor.name,
       email:            vendor.email,
       phone:            vendor.phone,
       country:          vendor.country,
-      // audits:           vendor.audits,
+      audits:           vendor.audits,
       city:             vendor.city,
-      certification:    vendor.certification,
+      certificationDocuments:    vendor.certificationDocuments,
       factories:        vendor.factories,
-      relevant3rdParties: vendor.relevant3rdParties,
-      createdAt:        vendor.createdAt,
+      relevant3RdPartySocialAudit: vendor.relevant3RdPartySocialAudit,
     })
     .from(vendor)
 
@@ -467,13 +466,13 @@ export async function getVendors(whereClause?: SQL) {
 }
 
 // // DEBUG: optional
-// export async function testConnection() {
-//   try {
-//     const result = await client`SELECT NOW() AS now`
-//     console.log('DB connection successful. Database time:', result)
-//   } catch (error) {
-//     console.error('DB connection test failed:', error)
-//   }
-// }
+export async function testConnection() {
+  try {
+    const result = await client`SELECT NOW() AS now`
+    console.log('DB connection successful. Database time:', result)
+  } catch (error) {
+    console.error('DB connection test failed:', error)
+  }
+}
 
-// testConnection()
+testConnection()
