@@ -111,7 +111,6 @@ export const document = pgTable("Document", {
 	content: text(),
 	kind: varchar().default('text').notNull(),
 	userId: uuid().notNull(),
-	text: varchar().default('text').notNull(),
 },
 (table) => {
 	return {
