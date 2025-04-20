@@ -1,29 +1,37 @@
+// artifacts/vendors/client.tsx
 import { Artifact } from '@/components/create-artifact';
 import {
   CopyIcon,
-  LineChartIcon,
   RedoIcon,
   SparklesIcon,
   UndoIcon,
 } from '@/components/icons';
-import { SpreadsheetEditor } from '@/components/sheet-editor';
-import { parse, unparse } from 'papaparse';
+import { Vendor as VendorType } from '@/lib/db/schema';
 import { toast } from 'sonner';
+import { Vendor } from '@/components/vendor';
 
-type Metadata = any;
+type VendorsMetadata = {
+  filteredCount?: number;
+  totalCount?: number;
+};
 
-export const vendorsArtifact = new Artifact<'vendors', Metadata>({
+export const vendorsArtifact = new Artifact<'vendors', VendorsMetadata>({
   kind: 'vendors',
-  description: 'Useful for showing vendors',
+  description: 'Useful for displaying and searching vendor information',
   initialize: async () => {},
   onStreamPart: ({ setArtifact, streamPart }) => {
     if (streamPart.type === 'vendors-delta') {
-      setArtifact((draftArtifact) => ({
-        ...draftArtifact,
-        content: streamPart.content as string,
-        isVisible: true,
-        status: 'streaming',
-      }));
+      try {
+        const vendors = JSON.parse(streamPart.content as string);
+        setArtifact((draftArtifact) => ({
+          ...draftArtifact,
+          content: streamPart.content as string,
+          isVisible: true,
+          status: 'streaming',
+        }));
+      } catch (error) {
+        console.error('Error parsing vendors data:', error);
+      }
     }
   },
   content: ({
@@ -33,14 +41,20 @@ export const vendorsArtifact = new Artifact<'vendors', Metadata>({
     onSaveContent,
     status,
   }) => {
+    let vendors: VendorType[] = [];
+    
+    try {
+      if (content) {
+        vendors = JSON.parse(content);
+      }
+    } catch (error) {
+      console.error('Error parsing vendors content:', error);
+    }
+
     return (
-      <SpreadsheetEditor
-        content={content}
-        currentVersionIndex={currentVersionIndex}
-        isCurrentVersion={isCurrentVersion}
-        saveContent={onSaveContent}
-        status={status}
-      />
+      <div className="flex flex-col py-8 md:p-20 px-4">
+        <Vendor companies={vendors} />
+      </div>
     );
   },
   actions: [
@@ -74,40 +88,21 @@ export const vendorsArtifact = new Artifact<'vendors', Metadata>({
     },
     {
       icon: <CopyIcon />,
-      description: 'Copy as .csv',
+      description: 'Copy as JSON',
       onClick: ({ content }) => {
-        const parsed = parse<string[]>(content, { skipEmptyLines: true });
-
-        const nonEmptyRows = parsed.data.filter((row) =>
-          row.some((cell) => cell.trim() !== ''),
-        );
-
-        const cleanedCsv = unparse(nonEmptyRows);
-
-        navigator.clipboard.writeText(cleanedCsv);
-        toast.success('Copied csv to clipboard!');
+        navigator.clipboard.writeText(content);
+        toast.success('Copied vendor data to clipboard!');
       },
     },
   ],
   toolbar: [
     {
-      description: 'Format and clean data',
+      description: 'Refine search',
       icon: <SparklesIcon />,
       onClick: ({ appendMessage }) => {
         appendMessage({
           role: 'user',
-          content: 'Can you please format and clean the data?',
-        });
-      },
-    },
-    {
-      description: 'Analyze and visualize data',
-      icon: <LineChartIcon />,
-      onClick: ({ appendMessage }) => {
-        appendMessage({
-          role: 'user',
-          content:
-            'Can you please analyze and visualize the data by creating a new code artifact in python?',
+          content: 'Can you refine this vendor search to be more specific?',
         });
       },
     },
