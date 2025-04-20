@@ -9,6 +9,9 @@ export const vendorsDocumentHandler = createDocumentHandler<'vendors'>({
   onCreateDocument: async ({ title, dataStream }) => {
     let draftContent = '';
 
+    // put sql query here
+    // give full response not just
+
     const { fullStream } = streamObject({
       model: openAIProvider.languageModel('artifact-model'),
       system: sheetPrompt,
@@ -27,7 +30,7 @@ export const vendorsDocumentHandler = createDocumentHandler<'vendors'>({
 
         if (csv) {
           dataStream.writeData({
-            type: 'sheet-delta',
+            type: 'vendors-delta',
             content: csv,
           });
 
@@ -37,7 +40,7 @@ export const vendorsDocumentHandler = createDocumentHandler<'vendors'>({
     }
 
     dataStream.writeData({
-      type: 'sheet-delta',
+      type: 'vendors-delta',
       content: draftContent,
     });
 

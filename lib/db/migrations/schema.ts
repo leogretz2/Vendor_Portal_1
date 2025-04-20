@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar, foreignKey, timestamp, text, json, boolean, bigint, primaryKey } from "drizzle-orm/pg-core"
-import { sql } from "drizzle-orm"
+  import { sql } from "drizzle-orm"
 
 
 
@@ -67,7 +67,7 @@ export const vendor = pgTable("Vendor", {
 	ytdPurchases: text("YTD Purchases"),
 	purchasesLy: text("Purchases LY"),
 	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	openPOs: bigint({ mode: "number" }),
+	openPos: bigint({ mode: "number" }),
 	terms: text("Terms"),
 	certificates: text("Certificates"),
 	name: text("Name"),
@@ -109,8 +109,8 @@ export const document = pgTable("Document", {
 	createdAt: timestamp({ mode: 'string' }).notNull(),
 	title: text().notNull(),
 	content: text(),
-	kind: varchar().default('text').notNull(),
 	userId: uuid().notNull(),
+	kind: varchar().default('text').notNull(),
 },
 (table) => {
 	return {

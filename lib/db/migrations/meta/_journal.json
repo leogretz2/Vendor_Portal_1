@@ -64,6 +64,13 @@
       "when": 1745098720263,
       "tag": "0008_volatile_thanos",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1745115556199,
+      "tag": "0009_demonic_frightful_four",
+      "breakpoints": true
     }
   ]
 }
