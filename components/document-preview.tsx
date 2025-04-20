@@ -1,3 +1,4 @@
+// components/document-preview.tsx
 'use client';
 
 import {
@@ -21,6 +22,7 @@ import { useArtifact } from '@/hooks/use-artifact';
 import equal from 'fast-deep-equal';
 import { SpreadsheetEditor } from './sheet-editor';
 import { ImageEditor } from './image-editor';
+import { Vendor } from './vendor';
 
 interface DocumentPreviewProps {
   isReadonly: boolean;
@@ -254,6 +256,16 @@ const DocumentContent = ({ document }: { document: Document }) => {
     suggestions: [],
   };
 
+  // For vendors, parse the JSON content
+  let vendors = [];
+  if (document.kind === 'vendors' && document.content) {
+    try {
+      vendors = JSON.parse(document.content);
+    } catch (error) {
+      console.error('Error parsing vendors content:', error);
+    }
+  }
+
   return (
     <div className={containerClassName}>
       {document.kind === 'text' ? (
@@ -279,6 +291,12 @@ const DocumentContent = ({ document }: { document: Document }) => {
           status={artifact.status}
           isInline={true}
         />
+      ) : document.kind === 'vendors' ? (
+        <div className="flex flex-1 relative size-full p-4">
+          <div className="absolute inset-0 overflow-y-auto">
+            <Vendor companies={vendors} />
+          </div>
+        </div>
       ) : null}
     </div>
   );
