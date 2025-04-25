@@ -65,7 +65,7 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
           <div
             key={v.id}
             className={cx(
-              'flex items-start gap-4 rounded-2xl p-4 max-w-[600px]',
+              'flex items-start gap-4 rounded-2xl p-4 max-w-[1000px]',
               'bg-slate-800 shadow-sm hover:shadow-md transition'
             )}
           >
