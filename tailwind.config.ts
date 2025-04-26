@@ -13,6 +13,9 @@ const config: Config = {
         sans: ['var(--font-geist)'],
         mono: ['var(--font-geist-mono)'],
       },
+      letterSpacing: {
+        DEFAULT: '-0.025em',
+      },
       screens: {
         'toast-mobile': '600px',
       },
@@ -22,6 +25,12 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        textColor: {
+          primary: '#000000',
+          secondary: '#5C5C5C',
+          tertiary: '#7C7C7C',
+          quaternary: '#9C9C9C',
+        },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
