@@ -43,7 +43,7 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
+    body: { id, selectedChatModel }, // DEBUG - id is repeated here, this is inefficient somehow
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,

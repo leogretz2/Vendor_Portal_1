@@ -48,13 +48,13 @@ export const openAIProvider = isTestEnvironment
     })
   : customProvider({
       languageModels: {
-        'chat-model': openai('gpt-4o'),
+        'chat-model': openai('gpt-3.5-turbo-0125'),
         'chat-model-reasoning': wrapLanguageModel({
           model: openai('gpt-4o'),
           middleware: extractReasoningMiddleware({ tagName: 'think' }),
         }),
-        'title-model': openai('gpt-4o'),
-        'artifact-model': openai('gpt-4o'),
+        'title-model': openai('gpt-3.5-turbo-0125'),
+        'artifact-model': openai('gpt-3.5-turbo-0125'),
       },
       imageModels: {
         'small-model': openai.image('dall-e-3'),

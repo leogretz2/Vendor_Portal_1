@@ -44,6 +44,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
 }): DocumentHandler<T> {
   return {
     kind: config.kind,
+    //@ts-ignore - Promise<void> ^ -> Promise<string>
     onCreateDocument: async (args: CreateDocumentCallbackProps) => {
       const draftContent = await config.onCreateDocument({
         id: args.id,
@@ -62,7 +63,9 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
         });
       }
 
-      return;
+      // DEBUG
+      // return;
+      return draftContent;
     },
     onUpdateDocument: async (args: UpdateDocumentCallbackProps) => {
       const draftContent = await config.onUpdateDocument({

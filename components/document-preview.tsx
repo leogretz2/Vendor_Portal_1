@@ -154,6 +154,8 @@ const PureHitboxLayer = ({
     updaterFn: UIArtifact | ((currentArtifact: UIArtifact) => UIArtifact),
   ) => void;
 }) => {
+  // DEBUG
+  // console.log('HitboxLayer result:', result);
   const handleClick = useCallback(
     (event: MouseEvent<HTMLElement>) => {
       const boundingBox = event.currentTarget.getBoundingClientRect();
@@ -269,6 +271,7 @@ const DocumentContent = ({ document }: { document: Document }) => {
   return (
     <div className={containerClassName}>
       {document.kind === 'text' ? (
+        // DEBUG - I think this is where the updateDocument should happen - onSaveContent is empty now
         <Editor {...commonProps} onSaveContent={() => {}} />
       ) : document.kind === 'code' ? (
         <div className="flex flex-1 relative w-full">

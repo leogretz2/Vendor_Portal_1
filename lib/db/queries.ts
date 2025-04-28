@@ -417,6 +417,7 @@ export async function updateChatVisiblityById({
  * Fetch vendors matching an optional WHERE clause.
  * If whereClause is omitted, returns all vendors.
  */
+// DEBUG - this needs to be changed to getFactories, and query the Factory table (probably only vendor-factory combo is unique)
 export async function getVendors(whereClause?: SQL) {
   // console.log('🔧 getVendors - received whereClause:', whereClause?.values);
 
@@ -452,12 +453,12 @@ export async function getVendors(whereClause?: SQL) {
     ? baseQuery.where(whereClause)
     : baseQuery
 
-  console.log('🔧 getVendors - about to run query…');
+  // console.log('🔧 getVendors - about to run query…');
 
   // execute and normalize bigint → string
   const rows = await finalQuery
 
-  console.log('🔧 getVendors - result rows:', rows);
+  console.log('🔧 getVendors - result rows:', rows.slice(0,2));
 
   return rows.map(r => ({
     ...r,
@@ -467,6 +468,7 @@ export async function getVendors(whereClause?: SQL) {
 
 // // DEBUG: optional
 export async function testConnection() {
+  // console.log('dber', process.env.POSTGRES_URL, 'll', client);
   try {
     const result = await client`SELECT NOW() AS now`
     console.log('DB connection successful. Database time:', result)

@@ -4,6 +4,7 @@ import { createDocumentHandler } from '@/lib/artifacts/server';
 import { getVendors } from '@/lib/db/queries';
 import { vendor } from '@/lib/db/schema';
 import { streamObject } from 'ai';
+import { config } from 'dotenv';
 import { sql } from 'drizzle-orm';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
@@ -38,11 +39,12 @@ export const vendorsDocumentHandler = createDocumentHandler<'vendors'>({
       // Fetch vendors from the database
       const vendors = await getVendors(whereClause);
       
-      // Stream the vendors to the client
-      dataStream.writeData({
-        type: 'vendors-delta',
-        content: JSON.stringify(vendors),
-      });
+      // DEBUG
+      // "Stream" the vendors to the client
+      // dataStream.writeData({
+      //   type: 'vendors-delta',
+      //   content: JSON.stringify(vendors),
+      // });
 
       return JSON.stringify(vendors);
     } catch (error) {
@@ -94,11 +96,12 @@ export const vendorsDocumentHandler = createDocumentHandler<'vendors'>({
       // Fetch vendors from the database
       const vendors = await getVendors(whereClause);
       
+      // DEBUG
       // Stream the vendors to the client
-      dataStream.writeData({
-        type: 'vendors-delta',
-        content: JSON.stringify(vendors),
-      });
+      // dataStream.writeData({
+      //   type: 'vendors-delta',
+      //   content: JSON.stringify(vendors),
+      // });
 
       return JSON.stringify(vendors);
     } catch (error) {

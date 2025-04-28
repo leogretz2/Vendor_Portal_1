@@ -23,7 +23,7 @@ export type DataStreamDelta = {
 };
 
 export function DataStreamHandler({ id }: { id: string }) {
-  const { data: dataStream } = useChat({ id });
+  const { data: dataStream, append } = useChat({ id });
   const { artifact, setArtifact, setMetadata } = useArtifact();
   const lastProcessedIndex = useRef(-1);
 
@@ -90,6 +90,29 @@ export function DataStreamHandler({ id }: { id: string }) {
             return draftArtifact;
         }
       });
+
+      // Add vendors-delta to chat
+      if (delta.type === 'vendors-delta') {
+        let list = [];
+        try {
+          list = JSON.parse(delta.content as string);
+        } catch (e) {
+          console.error('could not parse vendors-delta', e);
+        }
+        if (Array.isArray(list) && list.length) {
+          const bulletList = list
+          .map((v: any) => `${v.vendorName} (${v.country})`)
+          .join('\n');
+          // DEBUG
+          console.log('DataStreamHandler', delta.type, ': jj ', delta.content, 'bb',bulletList)
+          append({
+            id: crypto.randomUUID(),
+            role: 'assistant',
+            content: `I found these vendors:\n${bulletList}`,
+            createdAt: new Date(),
+          });
+        }
+      }
     });
   }, [dataStream, setArtifact, setMetadata, artifact]);
 

@@ -26,6 +26,7 @@ import { getWeather } from '@/lib/ai/tools/get-weather';
 // import { getVendorsTool } from '@/lib/ai/tools/get-vendors';
 import { isProductionEnvironment } from '@/lib/constants';
 import { openAIProvider } from '@/lib/ai/providers';
+import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 
 export const maxDuration = 60;
 
@@ -55,6 +56,8 @@ export async function POST(request: Request) {
 
     const chat = await getChatById({ id });
 
+    const modelName = selectedChatModel ?? DEFAULT_CHAT_MODEL; // DEBUG - why isn't this passed to the api/chat POST?
+
     if (!chat) {
       const title = await generateTitleFromUserMessage({
         message: userMessage,
@@ -83,7 +86,7 @@ export async function POST(request: Request) {
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: openAIProvider.languageModel(selectedChatModel),
+          model: openAIProvider.languageModel(modelName),
           system: systemPrompt({ selectedChatModel }),
           messages,
           maxSteps: 5,
@@ -94,7 +97,7 @@ export async function POST(request: Request) {
                   'getWeather',
                   'createDocument',
                   'updateDocument',
-                  'requestSuggestions',
+                  // 'requestSuggestions',
                   // 'getVendors',
                 ],
           experimental_transform: smoothStream({ chunking: 'word' }),
@@ -103,10 +106,11 @@ export async function POST(request: Request) {
             getWeather,
             createDocument: createDocument({ session, dataStream }),
             updateDocument: updateDocument({ session, dataStream }),
-            requestSuggestions: requestSuggestions({
-              session,
-              dataStream,
-            }),
+            // DEBUG - wtf is this?
+            // requestSuggestions: requestSuggestions({
+            //   session,
+            //   dataStream,
+            // }),
             // getVendors: getVendorsTool,
           },
           onFinish: async ({ response }) => {
@@ -121,6 +125,29 @@ export async function POST(request: Request) {
                 if (!assistantId) {
                   throw new Error('No assistant message found!');
                 }
+
+                // DEBUG
+                const processor = response.messages.filter(msg=> msg.role != 'assistant')//.map(m=>m.content.slice(0,10)); 
+                const roles = response.messages.map(m=>m.role);
+                // console.log('appendresponsemessages (start):', processor);
+                // console.log('appendresponsemessages (first):', response.messages[1].content);
+                // console.log('appendresponsemessages (role):', roles);
+                // messages[0].content
+
+
+                // DEBUG
+                // Process and examine the output message(s) from the tool calls.
+                // If it is the vendors document output (e.g., it has metadata.hidden === true),
+                // then append it to the chat history as a hidden message.
+                // const processedMessages = response.messages.map((msg) => {
+                //   if (msg.type == "vendors-delta") {// metadata && msg.metadata.vendorsData) {
+                //     return {
+                //       ...msg,
+                //       role: 'system', // or add a flag `hidden: true`
+                //     };
+                //   }
+                //   return msg;
+                // });
 
                 const [, assistantMessage] = appendResponseMessages({
                   messages: [userMessage],
@@ -157,14 +184,24 @@ export async function POST(request: Request) {
           sendReasoning: true,
         });
       },
-      onError: () => {
-        return 'Oops, an error occurred!';
+      onError: (error) => {
+        console.error('streamText failed:', error);
+        // Let the request fail with 500 so useChat sees a real error
+        throw error;  
+        
+        // DEBUG
+        // console.log('onError called in api/chat POST')
+        // return 'Oops, an error occurred!';
       },
     });
   } catch (error) {
-    return new Response('An error occurred while processing your request!', {
-      status: 404,
-    });
+    // DEBUG - adding to investigate error
+    //   return new Response('An error occurred while processing your request!', {
+    //     status: 404,
+    //   });
+    // }
+    console.error('chat route failed:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 }
 
@@ -193,8 +230,12 @@ export async function DELETE(request: Request) {
 
     return new Response('Chat deleted', { status: 200 });
   } catch (error) {
-    return new Response('An error occurred while processing your request!', {
-      status: 500,
-    });
+    // DEBUG - investigating error
+    //   return new Response('An error occurred while processing your request!', {
+    //     status: 500,
+    //   });
+    // }
+    console.error('chat route failed delete:', error);
+    return new Response('Internal Server Error delete', { status: 500 });
   }
 }

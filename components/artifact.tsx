@@ -97,6 +97,9 @@ function PureArtifact({
     fetcher,
   );
 
+  // DEBUG
+  console.log('documents:', documents);
+
   const [mode, setMode] = useState<'edit' | 'diff'>('edit');
   const [document, setDocument] = useState<Document | null>(null);
   const [currentVersionIndex, setCurrentVersionIndex] = useState(-1);
@@ -252,6 +255,9 @@ function PureArtifact({
       }
     }
   }, [artifact.documentId, artifactDefinition, setMetadata]);
+
+  // DEBUG
+  // console.log('artifact:', artifactDefinition.content.defaultProps);
 
   return (
     <AnimatePresence>
