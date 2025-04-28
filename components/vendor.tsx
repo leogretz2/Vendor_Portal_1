@@ -4,6 +4,7 @@ import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import type { Vendor as VendorType } from '@/lib/db/schema';
+import VendorData3 from './vendor-data-3';
 
 const SAMPLE_VENDORS: VendorType[] = [
   {
@@ -75,7 +76,10 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
           >
 
             <div className="flex-1 flex gap-7">
-              <div className="left flex-1 flex flex-col gap-3 max-w-72">
+              <div
+                className="left flex flex-col gap-3 max-w-72"
+                // style={{maxWidth: "180px"}}
+              >
                 
                 <div className="title mb-2">
                   {v.vendorName ? (
@@ -166,7 +170,7 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
 
               <div className="w-[1px] bg-[#F7F7F7] shrink-0"/>
 
-              <div className="right flex-1 flex flex-col gap-6">
+              <div className="center flex-1 flex flex-col gap-6">
                 <div>
                   <p className="text-xs text-textColor-quaternary mb-1">Notes</p>
                   <div className="text-xs text-textColor-secondary">
@@ -185,11 +189,21 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
                   <p className="text-xs text-textColor-quaternary mb-1">Capabilities</p>
                   <ul className="capabilities-table grid grid-cols-2 text-xs">
                     {v.productRange && v.productRange.split(',').map((product, i) => (
-                      <li className="list-disc ml-4 -indent-[0.25rem] text-textColor-secondary mb-1">{product}</li>
+                      <li
+                        key={i}
+                        className="list-disc ml-4 -indent-[0.25rem] text-textColor-secondary mb-1"
+                        style={{ 
+                          wordBreak: "break-word",
+                          overflowWrap: "anywhere",
+                          hyphens: "auto"
+                        }}
+                      >{product}</li>
                     ))}
                   </ul>
                 </div>
               </div>
+
+              <VendorData3 country={v.country} />
             </div>
           </div>
         );
