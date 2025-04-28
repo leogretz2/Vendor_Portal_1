@@ -87,7 +87,7 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
                   {v.factoryName ? (
                     <h4 className="text-textColor-secondary text-lg lowercase">{v.factoryName}</h4>
                   ) : (
-                    <h4 className="text-textColor-quaternary italic text-lg">{'Unknown Factory Name'}</h4>
+                    <h4 className="text-textColor-quaternary italic text-lg">{'Factory Name Unknown'}</h4>
                   )}
                 </div>
 
@@ -169,7 +169,7 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
               <div className="right flex-1 flex flex-col gap-6">
                 <div>
                   <p className="text-xs text-textColor-quaternary mb-1">Notes</p>
-                  <p className="text-xs text-textColor-secondary">
+                  <div className="text-xs text-textColor-secondary">
                     {v.vendorType && (<p>Type: {v.vendorType}</p>)}
                     {v.internalId && (<p>Internal ID: {v.internalId}</p>)}
                     {v.category && (<p>Category: {v.category}</p>)}
@@ -178,7 +178,7 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
                     {v.openPOs && (<p>Open POs: {v.openPOs}</p>)}
                     {v.terms && (<p>Terms: {v.terms}</p>)}
                     {v.factories && (<p>Factories: {v.factories}</p>)}
-                  </p>
+                  </div>
                 </div>
                 
                 <div className="section">

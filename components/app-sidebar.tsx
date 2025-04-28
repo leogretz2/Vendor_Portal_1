@@ -16,6 +16,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 export function AppSidebar({ user }: { user: User | undefined }) {
@@ -32,11 +33,17 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               onClick={() => {
                 setOpenMobile(false);
               }}
-              className="flex flex-row gap-3 items-center"
+              className="flex flex-col items-center hover:bg-muted rounded-md cursor-pointer"
             >
-              <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Chatbot
-              </span>
+              <Image
+                src="/images/logo.svg"
+                alt="Twelve Logo"
+                height={0}
+                width={72}
+              />
+              <p className="text-xs px-2 text-textColor-tertiary">
+                Intelligence
+              </p>
             </Link>
             <Tooltip>
               <TooltipTrigger asChild>
