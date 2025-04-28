@@ -10,25 +10,25 @@ const headingStyle = "text-xl leading-1 text-textColor-tertiary w-full text-cent
 
 const getPrice = () => {
     const priceOptions = [
-        <h4 className={headingStyle}>
+        <h4 key="four-money" className={headingStyle}>
             $$$$
         </h4>,
-        <h4 className={headingStyle}>
+        <h4 key="three-money" className={headingStyle}>
             <span className="text-textColor-primary">$</span>
             $$$
         </h4>,
-        <h4 className={headingStyle}>
+        <h4 key="two-money" className={headingStyle}>
             <span className="text-textColor-primary">$$</span>
             $$
         </h4>,
-        <h4 className={headingStyle}>
+        <h4 key="one-money" className={headingStyle}>
             <span className="text-textColor-primary">$$$</span>
             $
         </h4>,
-        <h4 className={headingStyle}>
+        <h4 key="no-money" className={headingStyle}>
             <span className="text-textColor-primary">$$$$</span>
         </h4>,
-        <h4 className={headingStyle}>
+        <h4 key="ellipsis-money" className={headingStyle}>
             ...
         </h4>
     ]
