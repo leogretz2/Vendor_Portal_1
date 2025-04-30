@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { useMemo } from "react";
 
 type VendorData3 = {
     country: string | null;
 }
 
-const headingStyle = "text-xl leading-1 text-textColor-tertiary w-full text-center"
+const headingStyle = "text-xl leading-1 text-textColor-quaternary w-full text-center"
 
 const getPrice = () => {
     const priceOptions = [
@@ -180,11 +181,11 @@ function VendorShowcaseImage() {
         },
     ]
 
-    const randomIndex = Math.floor(Math.random() * products.length);
+    const randomIndex = useMemo(() => { return Math.floor(Math.random() * products.length); }, [])
     const src = products[randomIndex].src;
     const name = products[randomIndex].name;
-    const randomQuantity = Math.round(Math.random() * 200) * 100;
-    const randomPrice = (Math.random() * (35 - 6) + 6).toFixed(2);
+    const randomQuantity = useMemo(() => { return Math.round(Math.random() * 200) * 100; }, [])
+    const randomPrice = useMemo(() => { return (Math.random() * (35 - 6) + 6).toFixed(2) }, []) ;
 
     return (
         <div className="flex-1" style={{ fontSize: "10px" }}>
@@ -211,6 +212,7 @@ function VendorShowcaseImage() {
 export default function VendorData3({ country }: VendorData3) {
     const tariff = getTariff(country);
     const countryString = getCountry(country);
+    const price = useMemo(() => { return getPrice(); }, []);
 
     return (
         <div className="flex flex-col justify-between" style={{ width: "296px" }}>
@@ -220,7 +222,7 @@ export default function VendorData3({ country }: VendorData3) {
                     style={{ marginBottom: "20px" }}
                 >
                     <div className="px-3 border border-gray-300 rounded-lg" style={{paddingTop: "10px", paddingBottom: "8px"}}>
-                        {getPrice()}
+                        {price}
                         <p style={{fontSize: "10px"}} className="text-textColor-quaternary w-full text-center">Rough Cost</p>
                     </div>
                     <div className="px-3 border border-gray-300 rounded-lg" style={{paddingTop: "10px", paddingBottom: "8px"}}>
