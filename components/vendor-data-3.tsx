@@ -7,7 +7,7 @@ type VendorData3 = {
     country: string | null;
 }
 
-const headingStyle = "text-xl leading-1 text-textColor-quaternary w-full text-center"
+const headingStyle = "text-base leading-1 text-textColor-quaternary w-full text-center"
 
 const getPrice = () => {
     const priceOptions = [
@@ -188,19 +188,19 @@ function VendorShowcaseImage() {
     const randomPrice = useMemo(() => { return (Math.random() * (35 - 6) + 6).toFixed(2) }, []) ;
 
     return (
-        <div className="flex-1" style={{ fontSize: "10px" }}>
+        <div className="flex-1" style={{ fontSize: "8px" }}>
             <Image
                 src={src}
                 alt=""
-                width={60}
-                height={100}
+                width={45}
+                height={75}
                 style={{
-                    height: "100px",
-                    width: "60px",
+                    height: "75px",
+                    width: "45px",
                     objectFit: "cover",
                     borderRadius: "2px"
                 }}
-                className="border mb-2"
+                className="border mb-1"
             />
             <p className="">{name}</p>
             <p className="text-textColor-tertiary">Quantity: {randomQuantity}</p>
@@ -215,33 +215,33 @@ export default function VendorData3({ country }: VendorData3) {
     const price = useMemo(() => { return getPrice(); }, []);
 
     return (
-        <div className="flex flex-col justify-between" style={{ width: "296px" }}>
+        <div className="flex flex-col justify-between" style={{ width: "220px" }}>
             <div>
                 <div
-                    className="flex w-full justify-end gap-3"
-                    style={{ marginBottom: "20px" }}
+                    className="flex w-full justify-end gap-2"
+                    style={{ marginBottom: "15px" }}
                 >
-                    <div className="px-3 border border-gray-300 rounded-lg" style={{paddingTop: "10px", paddingBottom: "8px"}}>
+                    <div className="px-2 border border-gray-300 rounded-lg" style={{paddingTop: "8px", paddingBottom: "6px"}}>
                         {price}
-                        <p style={{fontSize: "10px"}} className="text-textColor-quaternary w-full text-center">Rough Cost</p>
+                        <p style={{fontSize: "8px"}} className="text-textColor-quaternary w-full text-center">Rough Cost</p>
                     </div>
-                    <div className="px-3 border border-gray-300 rounded-lg" style={{paddingTop: "10px", paddingBottom: "8px"}}>
+                    <div className="px-2 border border-gray-300 rounded-lg" style={{paddingTop: "8px", paddingBottom: "6px"}}>
                         <h4 className={headingStyle}>{tariff}</h4>
-                        <p style={{fontSize: "10px"}} className="text-textColor-quaternary w-full text-center">Tariff</p>
+                        <p style={{fontSize: "8px"}} className="text-textColor-quaternary w-full text-center">Tariff</p>
                     </div>
                     <div
-                        className="px-3 border border-gray-300 rounded-lg"
-                        style={{paddingTop: "10px", paddingBottom: "8px"}}
+                        className="px-2 border border-gray-300 rounded-lg"
+                        style={{paddingTop: "8px", paddingBottom: "6px"}}
                     >
                         <h4 className={headingStyle}>{countryString}</h4>
-                        <p style={{fontSize: "10px"}} className="text-textColor-quaternary w-full text-center">Country of Origin</p>
+                        <p style={{fontSize: "8px"}} className="text-textColor-quaternary w-full text-center">Country of Origin</p>
                     </div>
                 </div>
                 
-                <div className="w-full flex flex-col gap-2">
-                    <h4 className="text-textColor-tertiary">Vendor Showcase</h4>
+                <div className="w-full flex flex-col gap-1">
+                    <h4 className="text-textColor-tertiary text-xs">Vendor Showcase</h4>
                     <div
-                        className="flex flex-row gap-2 w-full"
+                        className="flex flex-row gap-1 w-full"
                     >
                         <VendorShowcaseImage/>
                         <VendorShowcaseImage/>
@@ -251,7 +251,7 @@ export default function VendorData3({ country }: VendorData3) {
                 </div>
             </div>
 
-            <Button variant={"secondary"} style={{ marginTop: "20px" }}>
+            <Button variant={"secondary"} size={"sm"} style={{ marginTop: "15px", fontSize: "12px" }}>
                 <Link href="https://drive.google.com/file/d/1TWXfEnEg230PT9Chk_blzXWhtHuB1-g_/view?usp=sharing">Vendor Catalog</Link>
             </Button>
         </div>
