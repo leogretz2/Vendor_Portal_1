@@ -33,8 +33,46 @@ This is a guide for using artifacts tools: \`createDocument\` and \`updateDocume
 Do not update document right after creating it. Wait for user feedback or request to update it.
 `;
 
-export const regularPrompt =
-  `You are a friendly assistant! Keep your responses concise and helpful.`;
+export const regularPrompt = `
+You are Twelve NYC's AI assistant operating inside the Vendor Portal.
+
+Mission: help users locate, inspect and manage vendors for their projects using the database tools that are available to you.
+
+Note:
+- Only use the **Vendor** table. 
+- The correct table name is "Vendor" (with a capital "V"). 
+
+Vendor Table Schema:
+[
+  {"column_name": "internalId", "data_type": "bigint"},
+  {"column_name": "VENDOR NAME", "data_type": "text"},
+  {"column_name": "FACTORY NAME", "data_type": "text"},
+  {"column_name": "Product Range", "data_type": "text"},
+  {"column_name": "Category", "data_type": "text"},
+  {"column_name": "Vendor Type", "data_type": "text"},
+  {"column_name": "YTD Purchases", "data_type": "text"},
+  {"column_name": "Purchases LY", "data_type": "text"},
+  {"column_name": "openPOs", "data_type": "bigint"},
+  {"column_name": "Terms", "data_type": "text"},
+  {"column_name": "Certificates", "data_type": "text"},
+  {"column_name": "Name", "data_type": "text"},
+  {"column_name": "Email", "data_type": "text"},
+  {"column_name": "Phone", "data_type": "text"},
+  {"column_name": "Country", "data_type": "text"},
+  {"column_name": "Audits", "data_type": "text"},
+  {"column_name": "City", "data_type": "text"},
+  {"column_name": "Certification documents", "data_type": "text"},
+  {"column_name": "Factories", "data_type": "text"},
+  {"column_name": "Relevant 3rd party social audit", "data_type": "text"},
+  {"column_name": "id", "data_type": "uuid"}
+]
+
+
+Use Markdown for tables / lists.
+`;
+
+// • Provider: this assistant was built by Blueprint Studio - users can e-mail blueprint.dao@gmail.com for new features or bug reports.
+
 
 // export const vendorSchemaPrompt = `
 // Vendor Table Schema:
@@ -51,9 +89,11 @@ export const regularPrompt =
 export const systemPrompt = ({ selectedChatModel }: { selectedChatModel: string }) => {
   const basePrompt = selectedChatModel === 'chat-model-reasoning'
     ? regularPrompt
-    : `${regularPrompt}\n\n${artifactsPrompt}`;
+    : `${regularPrompt}`;
   return basePrompt;
 };
+
+// ${artifactsPrompt}
 
 // DEBUG
 // export const systemPrompt = ({
@@ -68,8 +108,7 @@ export const systemPrompt = ({ selectedChatModel }: { selectedChatModel: string 
 //   }
 // };
 
-export const codePrompt = `
-You are a Python code generator that creates self-contained, executable code snippets. When writing code:
+export const codePrompt = `You are a Python code generator that creates self-contained, executable code snippets. When writing code:
 
 1. Each snippet should be complete and runnable on its own
 2. Prefer using print() statements to display outputs
@@ -129,3 +168,4 @@ Improve the following spreadsheet based on the given prompt.
 ${currentContent}
 `
         : '';
+

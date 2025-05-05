@@ -27,6 +27,7 @@ import { getWeather } from '@/lib/ai/tools/get-weather';
 import { isProductionEnvironment } from '@/lib/constants';
 import { openAIProvider } from '@/lib/ai/providers';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
+import { getMcpClient } from '@/lib/ai/mcp';
 
 export const maxDuration = 60;
 
@@ -84,28 +85,36 @@ export async function POST(request: Request) {
     });
 
     return createDataStreamResponse({
-      execute: (dataStream) => {
+      execute: async (dataStream) => {
+        // Load MCP tools dynamically
+        const mcpClient = await getMcpClient();
+        
+        const mcpTools = await mcpClient.tools();
+        console.log('Loaded MCP tools:', Object.keys(mcpTools));
+
+        const sysPromptText = systemPrompt({ selectedChatModel });
+        console.log('System Prompt sent to model:\n', sysPromptText);
+        console.log('Messages sent to model:', JSON.stringify(messages, null, 2));
+
         const result = streamText({
           model: openAIProvider.languageModel(modelName),
-          system: systemPrompt({ selectedChatModel }),
+          system: sysPromptText,
           messages,
-          maxSteps: 5,
-          experimental_activeTools:
+          maxSteps: 10,
+          experimental_activeTools: (
             selectedChatModel === 'chat-model-reasoning'
-              ? []
-              : [
-                  'getWeather',
-                  'createDocument',
-                  'updateDocument',
-                  // 'requestSuggestions',
-                  // 'getVendors',
-                ],
+              ? [...Object.keys(mcpTools)]
+              : [...Object.keys(mcpTools)]
+              // 'getWeather', 'createDocument', 'updateDocument',
+          ) as any,
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
           tools: {
-            getWeather,
-            createDocument: createDocument({ session, dataStream }),
-            updateDocument: updateDocument({ session, dataStream }),
+            // getWeather,
+            // createDocument: createDocument({ session, dataStream }),
+            // updateDocument: updateDocument({ session, dataStream }),
+            // merge remote tools
+            ...mcpTools,
             // DEBUG - wtf is this?
             // requestSuggestions: requestSuggestions({
             //   session,
@@ -171,6 +180,10 @@ export async function POST(request: Request) {
                 console.error('Failed to save chat');
               }
             }
+            // Note: We intentionally keep the MCP client open for the lifetime
+            // of the Next.js process so subsequent requests reuse the same
+            // connection. Closing it here would cause "Attempted to send a
+            // request from a closed client" errors on the next request.
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
