@@ -159,13 +159,13 @@ const PurePreviewMessage = ({
                       key={toolCallId}
                       className={cx({
                         /* ↓ include the new tool for the loading skeleton */
-                        skeleton: ['getWeather', 'getVendors'].includes(toolName), // ← NEW
+                        skeleton: ['getWeather', 'showVendors'].includes(toolName),
                       })}
                     >
                       {toolName === 'getWeather' ? (
                         <Weather />
-                      ) : toolName === 'getVendors' ? (       
-                        <Vendor />                 
+                      ) : toolName === 'showVendors' ? (
+                        <Vendor />
                       ) : toolName === 'createDocument' ? (
                         <DocumentPreview isReadonly={isReadonly} args={args} />
                       ) : toolName === 'updateDocument' ? (
@@ -192,7 +192,7 @@ const PurePreviewMessage = ({
                     <div key={toolCallId}>
                       {toolName === 'getWeather' ? (
                         <Weather weatherAtLocation={result} />
-                      ) : toolName === 'getVendors' ? (          
+                      ) : toolName === 'showVendors' ? (
                         <Vendor companies={result} />
                       ) : toolName === 'createDocument' ? (
                         <DocumentPreview

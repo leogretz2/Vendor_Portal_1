@@ -1,8 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import React, { memo } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { CodeBlock } from './code-block';
+import useSWR from 'swr';
+import { Vendor as VendorCard } from '@/components/vendor';
+import { fetcher } from '@/lib/utils';
 
 const components: Partial<Components> = {
   // @ts-expect-error
@@ -91,13 +97,43 @@ const components: Partial<Components> = {
       </h6>
     );
   },
+  vendor: ({ node }: { node: any }) => {
+    // @ts-ignore
+    const idAttr = node?.properties?.id as string | undefined;
+    if (!idAttr) return null;
+    const ids = idAttr.split(',').map((s) => s.trim());
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { data } = useSWR(ids.length ? `/api/vendor?id=${ids.join(',')}` : null, fetcher);
+
+    if (!data) {
+      return <span>Loading vendor...</span>;
+    }
+
+    return <VendorCard companies={data} />;
+  },
+  Vendor: ({ node }: { node: any }) => {
+    // support capitalised tag
+    // @ts-ignore
+    const idAttr = node?.properties?.id as string | undefined;
+    if (!idAttr) return null;
+    const ids = idAttr.split(',').map((s) => s.trim());
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { data } = useSWR(ids.length ? `/api/vendor?id=${ids.join(',')}` : null, fetcher);
+
+    if (!data) {
+      return <span>Loading vendor...</span>;
+    }
+
+    return <VendorCard companies={data} />;
+  },
 };
 
 const remarkPlugins = [remarkGfm];
+const rehypePlugins = [rehypeRaw];
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   return (
-    <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
+    <ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePlugins} components={components}>
       {children}
     </ReactMarkdown>
   );

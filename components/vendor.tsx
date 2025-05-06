@@ -46,10 +46,10 @@ export function Vendor({ companies }: { companies?: VendorType[] | null }) {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const maxItems = isMobile ? 3 : 5;
-  const sourceArray = Array.isArray(companies) ? companies : SAMPLE_VENDORS;
-  const list = sourceArray.slice(0, maxItems);
+  // const maxItems = isMobile ? 3 : 5;
+  // const sourceArray = Array.isArray(companies) ? companies : SAMPLE_VENDORS;
 
+  const list = Array.isArray(companies) ? companies : SAMPLE_VENDORS;
   if (list.length === 0) {
     return (
       <div className="py-6 text-center text-slate-400 text-sm">
