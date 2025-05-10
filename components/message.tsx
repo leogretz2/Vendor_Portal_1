@@ -20,6 +20,7 @@ import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
 import { MessageReasoning } from './message-reasoning';
 import { UseChatHelpers } from '@ai-sdk/react';
+import { QueryingDatabaseMessage } from './querying-database-message';
 
 const PurePreviewMessage = ({
   chatId,
@@ -154,70 +155,59 @@ const PurePreviewMessage = ({
                 if (state === 'call') {
                   const { args } = toolInvocation;
 
-                  return (
-                    <div
-                      key={toolCallId}
-                      className={cx({
-                        /* ↓ include the new tool for the loading skeleton */
-                        skeleton: ['getWeather', 'showVendors'].includes(toolName),
-                      })}
-                    >
-                      {toolName === 'getWeather' ? (
-                        <Weather />
-                      ) : toolName === 'showVendors' ? (
-                        <Vendor />
-                      ) : toolName === 'createDocument' ? (
-                        <DocumentPreview isReadonly={isReadonly} args={args} />
-                      ) : toolName === 'updateDocument' ? (
-                        <DocumentToolCall
-                          type="update"
-                          args={args}
-                          isReadonly={isReadonly}
-                        />
-                      ) : toolName === 'requestSuggestions' ? (
-                        <DocumentToolCall
-                          type="request-suggestions"
-                          args={args}
-                          isReadonly={isReadonly}
-                        />
-                      ) : null}
-                    </div>
-                  );
+                  // Explicitly handled tools with their own UI for the 'call' state
+                  // (often these components will show their own loading/skeleton state)
+                  if (toolName === 'getWeather') {
+                    return <Weather key={toolCallId} />;
+                  }
+                  if (toolName === 'showVendors') {
+                    // <Vendor /> component is expected to show its own skeleton initially
+                    return <Vendor key={toolCallId} />;
+                  }
+                  if (toolName === 'createDocument') {
+                    return <DocumentPreview key={toolCallId} isReadonly={isReadonly} args={args} />;
+                  }
+                  if (toolName === 'updateDocument') {
+                    return <DocumentToolCall key={toolCallId} type="update" args={args} isReadonly={isReadonly} />;
+                  }
+                  if (toolName === 'requestSuggestions') {
+                    return <DocumentToolCall key={toolCallId} type="request-suggestions" args={args} isReadonly={isReadonly} />;
+                  }
+                  
+                  // Catch-all for other tool calls (assumed to be MCP/background DB queries)
+                  // Render the QueryingDatabaseMessage for these.
+                  // The className `cx` and `skeleton` logic from your original code is removed here
+                  // as QueryingDatabaseMessage handles its own appearance.
+                  return <QueryingDatabaseMessage key={toolCallId} toolName={toolName} />;
                 }
 
                 if (state === 'result') {
                   const { result } = toolInvocation;
 
-                  return (
-                    <div key={toolCallId}>
-                      {toolName === 'getWeather' ? (
-                        <Weather weatherAtLocation={result} />
-                      ) : toolName === 'showVendors' ? (
-                        <Vendor companies={result} />
-                      ) : toolName === 'createDocument' ? (
-                        <DocumentPreview
-                          isReadonly={isReadonly}
-                          result={result}
-                        />
-                      ) : toolName === 'updateDocument' ? (
-                        <DocumentToolResult
-                          type="update"
-                          result={result}
-                          isReadonly={isReadonly}
-                        />
-                      ) : toolName === 'requestSuggestions' ? (
-                        <DocumentToolResult
-                          type="request-suggestions"
-                          result={result}
-                          isReadonly={isReadonly}
-                        />
-                      ) : (
-                        null /* Render nothing; we can build a UI later */
-                      )}
-                    </div>
-                  );
+                  // Explicitly handled tools with their own UI for the 'result' state
+                  if (toolName === 'getWeather') {
+                    return <Weather key={toolCallId} weatherAtLocation={result} />;
+                  }
+                  if (toolName === 'showVendors') {
+                    return <Vendor key={toolCallId} companies={result} />;
+                  }
+                  if (toolName === 'createDocument') {
+                    return <DocumentPreview key={toolCallId} isReadonly={isReadonly} result={result} />;
+                  }
+                  if (toolName === 'updateDocument') {
+                    return <DocumentToolResult key={toolCallId} type="update" result={result} isReadonly={isReadonly} />;
+                  }
+                  if (toolName === 'requestSuggestions') {
+                    return <DocumentToolResult key={toolCallId} type="request-suggestions" result={result} isReadonly={isReadonly} />;
+                  }
+                  
+                  // For other tools (MCP/background DB queries), their result is typically used by the AI
+                  // for subsequent text generation and not directly displayed. So, render null.
+                  // console.log(`Result for tool ${toolName} (not rendered):`, result); // For debugging
+                  return null;
                 }
               }
+              return null; // Fallback for any other part types
             })}
 
             {!isReadonly && (
@@ -226,7 +216,7 @@ const PurePreviewMessage = ({
                 chatId={chatId}
                 message={message}
                 vote={vote}
-                isLoading={isLoading}
+                isLoading={isLoading} // This isLoading is for the overall message stream
               />
             )}
           </div>
@@ -243,10 +233,13 @@ export const PreviewMessage = memo(
     if (prevProps.message.id !== nextProps.message.id) return false;
     if (!equal(prevProps.message.parts, nextProps.message.parts)) return false;
     if (!equal(prevProps.vote, nextProps.vote)) return false;
+    // Add if you have attachments on the main message object and they need deep comparison
+    // if (!equal(prevProps.message.experimental_attachments, nextProps.message.experimental_attachments)) return false;
 
     return true;
   },
 );
+
 
 export const ThinkingMessage = () => {
   const role = 'assistant';

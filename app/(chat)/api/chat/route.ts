@@ -23,7 +23,7 @@ import { generateTitleFromUserMessage } from '../../actions';
 // import { updateDocument } from '@/lib/ai/tools/update-document';
 // import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 // import { getWeather } from '@/lib/ai/tools/get-weather';
-// import { showVendors } from '@/lib/ai/tools/show-vendors';
+import { showVendors } from '@/lib/ai/tools/show-vendors';
 // import { getVendorsTool } from '@/lib/ai/tools/get-vendors';
 import { isProductionEnvironment } from '@/lib/constants';
 import { openAIProvider } from '@/lib/ai/providers';
@@ -104,8 +104,8 @@ export async function POST(request: Request) {
           maxSteps: 10,
           experimental_activeTools: (
             selectedChatModel === 'chat-model-reasoning'
-              ? [...Object.keys(mcpTools)]
-              : [...Object.keys(mcpTools)]
+              ? [...Object.keys(mcpTools), 'showVendors']
+              : [...Object.keys(mcpTools), 'showVendors']
               // 'getWeather', 'createDocument', 'updateDocument',
           ) as any,
           experimental_transform: smoothStream({ chunking: 'word' }),
@@ -116,6 +116,7 @@ export async function POST(request: Request) {
             // updateDocument: updateDocument({ session, dataStream }),
             // merge remote tools
             ...mcpTools,
+            showVendors,
             // DEBUG - wtf is this?
             // requestSuggestions: requestSuggestions({
             //   session,
@@ -123,6 +124,7 @@ export async function POST(request: Request) {
             // }),
             // getVendors: getVendorsTool,
           },
+          
           onFinish: async ({ response }) => {
             if (session.user?.id) {
               try {
@@ -139,6 +141,22 @@ export async function POST(request: Request) {
                 // DEBUG
                 const processor = response.messages.filter(msg=> msg.role != 'assistant')//.map(m=>m.content.slice(0,10)); 
                 const roles = response.messages.map(m=>m.role);
+
+                const assistantMessages = response.messages.filter(
+                  (message) => message.role === 'assistant',
+                );
+          
+                // Log the content of assistant messages
+                // assistantMessages.forEach((msg, index) => {
+                //   msg.parts.forEach((part, partIndex) => {
+                //     if (part.type === 'text') {
+                //       console.log(`AI Output (Assistant Message ${index}, Part ${partIndex}):\n${part.text}`);
+                //     } else if (part.type === 'tool-call') {
+                //       console.log(`AI Output (Assistant Message ${index}, Part ${partIndex} - Tool Call):`, part.toolCall);
+                //     }
+                //   });
+                // });
+                
                 // console.log('appendresponsemessages (start):', processor);
                 // console.log('appendresponsemessages (first):', response.messages[1].content);
                 // console.log('appendresponsemessages (role):', roles);
